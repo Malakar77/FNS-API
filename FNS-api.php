@@ -1,17 +1,30 @@
 <?php
+// Устанавливаем заголовок для возвращаемого JSON
+header('Content-Type: application/json');
+
 // Проверяем метод запроса
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-// Получаем данные из тела запроса
+    // Получаем данные из тела запроса
     $data = json_decode(file_get_contents("php://input"));
-    $result=array();
 
-    $result['company'] = serchCompany($data);
-
+    // Проверяем, что данные были получены правильно
+    if (json_last_error() === JSON_ERROR_NONE) {
+        // Вызываем функцию для поиска компаний и сохраняем результат
+        $result['company'] = serchCompany($data);
+        
+        // Возвращаем результат в формате JSON
+        echo json_encode($result);
+    } else {
+        // Если данные не получены правильно, возвращаем ошибку
+        echo json_encode(['error' => 'Invalid JSON input']);
+    }
 }
 
+// Функция для поиска компаний
 function serchCompany(object $data) {
-    $apiKey = 'your API key';
+    // Ваш API-ключ
+    $apiKey = 'ВАШ КЛЮЧ API';
     $baseUrl = 'https://api-fns.ru/api/search';
 
     // Массив параметров для построения URL
@@ -21,6 +34,7 @@ function serchCompany(object $data) {
         'key' => $apiKey
     ];
 
+    // Добавляем параметры в запрос, если они присутствуют
     if (!empty($data->addFormCompany->okved)) {
         $params['filter'] .= ' okved' . $data->addFormCompany->okved;
     }
@@ -50,10 +64,11 @@ function serchCompany(object $data) {
         $url = $baseUrl . '?' . http_build_query($params);
 
         // Выполняем запрос
-        $response = test($url);
+        $response = CurlSent($url);
 
         // Обработка данных ответа
         if (isset($response['items'])) {
+            // Объединяем результаты текущей страницы с общим результатом
             $result = array_merge($result, $response['items']);
         }
 
@@ -67,23 +82,30 @@ function serchCompany(object $data) {
     return $result;
 }
 
-function test($url) {
+// Функция для выполнения запроса к API
+function CurlSent($url) {
+    // Инициализация cURL
     $ch = curl_init();
 
+    // Установка URL и параметров для cURL
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
+    // Выполнение запроса
     $response = curl_exec($ch);
 
+    // Проверка на ошибки выполнения cURL
     if (curl_errno($ch)) {
         die('Curl error: ' . curl_error($ch));
     }
 
+    // Закрытие cURL
     curl_close($ch);
 
     // Обработка и декодирование JSON-ответа
     $data = json_decode($response, true);
 
+    // Проверка на ошибки декодирования JSON
     if (json_last_error() !== JSON_ERROR_NONE) {
         die('Error decoding JSON');
     }
@@ -91,4 +113,3 @@ function test($url) {
     // Возвращаем данные
     return $data;
 }
-
