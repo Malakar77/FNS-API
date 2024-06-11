@@ -116,6 +116,3 @@ The server returns a structured JSON document containing a list of found organiz
 This project is licensed under the MIT License.
 ```
 
-I've created the `README.md` file. You can download it using the link below:
-
-[README.md](sandbox:/mnt/data/README.md)
