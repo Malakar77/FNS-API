@@ -10,11 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Проверяем, что данные были получены правильно
     if (json_last_error() === JSON_ERROR_NONE) {
-        // Вызываем функцию для поиска компаний и сохраняем результат
-        $result['company'] = serchCompany($data);
-        
         // Возвращаем результат в формате JSON
-        echo json_encode($result);
+        echo json_encode(serchCompany($data));
     } else {
         // Если данные не получены правильно, возвращаем ошибку
         echo json_encode(['error' => 'Invalid JSON input']);
