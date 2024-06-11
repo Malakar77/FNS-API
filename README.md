@@ -114,5 +114,5 @@ The server returns a structured JSON document containing a list of found organiz
 ## License
 
 This project is licensed under the MIT License.
-```
+
 
