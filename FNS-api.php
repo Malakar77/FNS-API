@@ -29,26 +29,26 @@ function serchCompany(object $data) {
 
     // Массив параметров для построения URL
     $params = [
-        'q' => !empty($data->addFormCompany->search) ? $data->addFormCompany->search : 'any',
+        'q' => !empty($data->search) ? $data->search : 'any',
         'filter' => 'active onlyul withphone',
         'key' => $apiKey
     ];
 
     // Добавляем параметры в запрос, если они присутствуют
-    if (!empty($data->addFormCompany->okved)) {
-        $params['filter'] .= ' okved' . $data->addFormCompany->okved;
+    if (!empty($data->okved)) {
+        $params['filter'] .= ' okved' . $data->okved;
     }
 
-    if (!empty($data->addFormCompany->region)) {
-        $params['filter'] .= ' region' . str_replace(' ', '|', $data->addFormCompany->region);
+    if (!empty($data->region)) {
+        $params['filter'] .= ' region' . str_replace(' ', '|', $data->region);
     }
 
-    if (!empty($data->addFormCompany->people)) {
-        $params['filter'] .= ' sotrudnikov>' . $data->addFormCompany->people;
+    if (!empty($data->people)) {
+        $params['filter'] .= ' sotrudnikov>' . $data->people;
     }
 
-    if (!empty($data->addFormCompany->gain)) {
-        $params['filter'] .= ' vyruchka>' . $data->addFormCompany->gain;
+    if (!empty($data->gain)) {
+        $params['filter'] .= ' vyruchka>' . $data->gain;
     }
 
     // Инициализация переменной для страницы
