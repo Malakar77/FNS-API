@@ -1,37 +1,37 @@
 <?php
-// Устанавливаем заголовок для возвращаемого JSON
+// Set the header for returning JSON
 header('Content-Type: application/json');
 
-// Проверяем метод запроса
+// Check the request method
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // Получаем данные из тела запроса
+    // Get data from the request body
     $data = json_decode(file_get_contents("php://input"));
 
-    // Проверяем, что данные были получены правильно
+    // Check if the data was received correctly
     if (json_last_error() === JSON_ERROR_NONE) {
-        // Возвращаем результат в формате JSON
-        echo json_encode(serchCompany($data));
+        // Return the result in JSON format
+        echo json_encode(searchCompany($data));
     } else {
-        // Если данные не получены правильно, возвращаем ошибку
+        // If the data was not received correctly, return an error
         echo json_encode(['error' => 'Invalid JSON input']);
     }
 }
 
-// Функция для поиска компаний
-function serchCompany(object $data) {
-    // Ваш API-ключ
-    $apiKey = 'ВАШ КЛЮЧ API';
+// Function to search for companies
+function searchCompany(object $data) {
+    // Your API key
+    $apiKey = 'YOUR API KEY';
     $baseUrl = 'https://api-fns.ru/api/search';
 
-    // Массив параметров для построения URL
+    // Array of parameters to build the URL
     $params = [
         'q' => !empty($data->search) ? $data->search : 'any',
         'filter' => 'active onlyul withphone',
         'key' => $apiKey
     ];
 
-    // Добавляем параметры в запрос, если они присутствуют
+    // Add parameters to the request if they are present
     if (!empty($data->okved)) {
         $params['filter'] .= ' okved' . $data->okved;
     }
@@ -48,65 +48,66 @@ function serchCompany(object $data) {
         $params['filter'] .= ' vyruchka>' . $data->gain;
     }
 
-    // Инициализация переменной для страницы
+    // Initialize the page variable
     $page = 1;
-    $result = []; // Массив для хранения всех результатов
+    $result = []; // Array to store all results
 
-    // Цикл для получения данных с последующих страниц
+    // Loop to get data from subsequent pages
     do {
-        // Добавляем параметр page к запросу
+        // Add the page parameter to the request
         $params['page'] = $page;
 
-        // Построение URL
+        // Build the URL
         $url = $baseUrl . '?' . http_build_query($params);
 
-        // Выполняем запрос
+        // Execute the request
         $response = CurlSent($url);
 
-        // Обработка данных ответа
+        // Process the response data
         if (isset($response['items'])) {
-            // Объединяем результаты текущей страницы с общим результатом
+            // Merge the current page results with the overall results
             $result = array_merge($result, $response['items']);
         }
 
-        // Увеличиваем номер страницы
+        // Increment the page number
         $page++;
 
-        // Проверка условия продолжения цикла
+        // Check the condition to continue the loop
     } while ($response['nextpage'] === true && $page <= 10);
 
-    // Возвращаем все собранные данные
+    // Return all collected data
     return $result;
 }
 
-// Функция для выполнения запроса к API
+// Function to execute the request to the API
 function CurlSent($url) {
-    // Инициализация cURL
+    // Initialize cURL
     $ch = curl_init();
 
-    // Установка URL и параметров для cURL
+    // Set the URL and parameters for cURL
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-    // Выполнение запроса
+    // Execute the request
     $response = curl_exec($ch);
 
-    // Проверка на ошибки выполнения cURL
+    // Check for cURL execution errors
     if (curl_errno($ch)) {
         die('Curl error: ' . curl_error($ch));
     }
 
-    // Закрытие cURL
+    // Close cURL
     curl_close($ch);
 
-    // Обработка и декодирование JSON-ответа
+    // Process and decode the JSON response
     $data = json_decode($response, true);
 
-    // Проверка на ошибки декодирования JSON
+    // Check for JSON decoding errors
     if (json_last_error() !== JSON_ERROR_NONE) {
         die('Error decoding JSON');
     }
 
-    // Возвращаем данные
+    // Return the data
     return $data;
 }
+?>
