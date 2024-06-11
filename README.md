@@ -1,4 +1,3 @@
-Here's the `README.md` file for the GitHub repository:
 
 ```markdown
 # Company Search API Integration
@@ -14,11 +13,11 @@ This repository contains a PHP script to search for companies using the FNS (Fed
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/company-search-api.git
+    git clone https://github.com/Malakar77/fns-api.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd company-search-api
+    cd fns-api
     ```
 3. Update the API key in `FNS-api.php`:
     ```php
