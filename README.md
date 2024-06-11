@@ -20,7 +20,7 @@ This repository contains a PHP script to search for companies using the FNS (Fed
     ```bash
     cd company-search-api
     ```
-3. Update the API key in `search_companies.php`:
+3. Update the API key in `FNS-api.php`:
     ```php
     $apiKey = 'your API key';
     ```
